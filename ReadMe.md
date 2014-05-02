@@ -14,5 +14,8 @@ Projet processing réalisé dans le cadre du cours [7ARN161 - Création d'images
 
 * [Télécharger le jeu](https://github.com/GabLeRoux/kingofthehill/archive/processing.zip) 
 * Installer [processing](https://www.processing.org/download/?processing)
-* Copier les libraries du dossier `libraries` dans le dossier `~/Documents/Processing/libraries` 
+* Copier les libraries du dossier `libraries` dans le dossier `~/Documents/Processing/libraries`
+* Ouvrir `kingofthehill.pde` à l'aide de processing
 * Exécuter le programme dans processing.
+* Récupérez la couronne!
+
