@@ -2,9 +2,9 @@
 
 Projet processing réalisé dans le cadre du cours [7ARN161 - Création d'images numérique](http://cours.uqac.ca/7ARN161)
 
-Chef programmeur: [Gabriel Le Breton](http://www.gableroux.com/)
-Artiste visuel et styliste: [Marianne Parent](https://www.behance.net/marianneparent)
-Artiste en animation et compositeur audio: [Eric Bergeron](http://www.ericbergeron.ca/)
+* Chef programmeur: [Gabriel Le Breton](http://www.gableroux.com/)
+* Artiste visuel et styliste: [Marianne Parent](https://www.behance.net/mariannepare* nt)
+* Artiste en animation et compositeur audio: [Eric Bergeron](http://www.ericbergeron.ca/)
 
 # Captures d'écran
 ![capture 1 kingofthehill](https://raw.githubusercontent.com/GabLeRoux/kingofthehill/master/screenshots/1.png)
