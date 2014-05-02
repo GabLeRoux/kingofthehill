@@ -2,6 +2,10 @@
 
 Projet processing réalisé dans le cadre du cours [7ARN161 - Création d'images numérique](http://cours.uqac.ca/7ARN161)
 
+# Captures d'écran
+![capture 1 kingofthehill](https://raw.githubusercontent.com/GabLeRoux/kingofthehill/master/src/screenshots/1.png)
+![capture 2 kingofthehill](https://raw.githubusercontent.com/GabLeRoux/kingofthehill/master/src/screenshots/2.png)
+
 ## Instructions
 
 ### Utiliser Eclipse pour faire du processing (much better)
