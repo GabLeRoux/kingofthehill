@@ -3,7 +3,9 @@ package kingofthehill;
 import java.util.ArrayList;
 
 import processing.core.PApplet;
+import processing.core.PShape;
 import fisica.FBox;
+import fisica.FPoly;
 import fisica.FWorld;
 import fisica.Fisica;
 
@@ -15,75 +17,88 @@ public class GameManager {
 	private FWorld world;
 
 	// Le sol
-	private FBox floor;
-	private FBox leftCorner;
-	private FBox rightCorner;
+	FPoly floor;
+	private float floorHeight = 170.0f;
 
 	// les ennemies
-	private ArrayList<Archer> archers = new ArrayList<Archer>();
-	private ArrayList<Dragon> dragons = new ArrayList<Dragon>();
-
-	// Vous vous souvenez de pytagore?
-	// a^2 + b^2 = c^2
-	// racine(a^2 + b^2) = c
-	// c = la hauteur des triangles du trapeze (le sol du jeu)
-	private float cornerHeight = (float) (Math.sqrt(Math.pow(200.0f, 2)
-			+ Math.pow(200.0f, 2)));
-	private float floorWidth = 800.0f;
-	private float floorHeight = 200.0f;
+	public ArrayList<Archer> archers = new ArrayList<Archer>();
+	public Dragon dragon;
 	public Player player;
 
 	public int enemiesLeftToAdd = 15;
 	public int enemiesLeftToKill = 15;
 
-	// Constructeur
+	/**
+	 * Constructeur pour le systeme de gestion du jeu
+	 * 
+	 * @param parent
+	 *            lien vers processing
+	 */
 	GameManager(PApplet parent) {
 		this.parent = parent;
 		Fisica.init(parent);
 		world = new FWorld();
 
 		createFloor();
+		createDragon();
 		createPlayer();
 
 		world.add(player);
 	}
 
+	/**
+	 * Creation du joueur
+	 */
 	private void createPlayer() {
 		player = new Player(parent);
 		player.setPosition(parent.width / 2, parent.height - floorHeight
 				- Player.playerSize);
 	}
 
-	private void createFloor() {
-		floor = new FBox(floorWidth, floorHeight);
-		floor.setPosition(parent.width / 2, parent.height - floorHeight / 2);
-		floor.setStatic(true);
-		floor.setFill(0, 100, 0);
-		floor.setGrabbable(false);
-		floor.setStroke(0);
+	/*
+	 * ^\ ^ / \\ / \ /. \\/ \ |\___/|----* / / | \\ \ __/ O O\ | / / / | \\ \_\/
+	 * \ \ / /\/ / / | \\ _\/ '@___@ / / / / | \\ _\/ |U | | / / | \\\/ | \ | /_
+	 * / | \\ ) \ _|_ \ \ ~-./_ _ | .- ; ( \_ _ _,\' ~ ~. .-~-.|.-* _ {-, \ ~-.
+	 * _ .-~ \ /\' \ } { .* ~. '-/ /.-~----. ~- _ / >..----.\\\ ~ - - - - ^}_ _
+	 * _ _ _ _ _.-\\\
+	 */
+	private void createDragon() {
+		try {
+			this.dragon = new Dragon(parent);
 
-		leftCorner = new FBox(cornerHeight, cornerHeight);
-		leftCorner.setStatic(true);
-		leftCorner.setRotation((float) Math.PI / 4);
-		leftCorner.setPosition((parent.width - floorWidth) / 2, parent.height);
-		leftCorner.setFill(0, 0, 0);
-		leftCorner.setGrabbable(false);
-		leftCorner.setStroke(0);
-
-		rightCorner = new FBox(cornerHeight, cornerHeight);
-		rightCorner.setStatic(true);
-		rightCorner.setRotation((float) (Math.PI / 4));
-		rightCorner.setPosition((parent.width - floorWidth) / 2 + floorWidth,
-				parent.height);
-		rightCorner.setFill(255, 255, 255);
-		rightCorner.setGrabbable(false);
-		rightCorner.setStroke(0);
-
-		world.add(floor);
-		world.add(leftCorner);
-		world.add(rightCorner);
+			dragon.setPosition(
+					(int) ((Math.random() * (parent.width - 0)) + 0),
+					(int) parent.height - floorHeight - Dragon.size);
+			dragon.setSize(0);
+			world.add(dragon);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
+	/**
+	 * Methode pour creer le sol du jeu et ses vertex (a l'aide d'un svg!)
+	 */
+	private void createFloor() {
+		floor = new FPoly();
+		floor.setStatic(true);
+		floor.setGrabbable(false);
+		floor.setNoStroke();
+		floor.setNoFill();
+
+		// On dessine les vertex depuis un fichier svg (parce que oui, on est
+		// hot comme ca)
+		PShape floor_svg = parent.loadShape("data/floor.svg").getChildren()[0];
+
+		for (int i = 0; i < floor_svg.getVertexCount(); i++) {
+			floor.vertex(floor_svg.getVertexX(i), floor_svg.getVertexY(i));
+		}
+		world.add(floor);
+	}
+
+	/**
+	 * Methode qui dessine le monde (sol,
+	 */
 	void worldDraw() {
 
 		if (isOutOfBound(player.getX(), player.getY())) {
@@ -93,20 +108,21 @@ public class GameManager {
 			player.anim.draw(player.getX() + Player.correctionX
 					* ((player.anim.facingRight) ? 1 : -1), player.getY()
 					+ Player.correctionY);
-			
+
 			// Archers
 			for (Archer archer : archers) {
 				if (archer.rightOf(player)
-						&& Math.abs(archer.getVelocityX()) < Player.maxVelocity / 10.0f) {
+						&& Math.abs(archer.getVelocityX()) < Player.maxVelocity / 20.0f) {
 					archer.addImpulse(-Archer.inpulse, 0.0f);
 					archer.anim.facingRight = false;
 				} else if (archer.leftOf(player)
-						&& Math.abs(archer.getVelocityX()) < Player.maxVelocity / 10.0f) {
+						&& Math.abs(archer.getVelocityX()) < Player.maxVelocity / 20.0f) {
 					archer.addImpulse(Archer.inpulse, 0.0f);
 					archer.anim.facingRight = true;
 				}
-				archer.anim.draw(archer.getX() + Archer.correctionX * ((archer.anim.facingRight) ? 1 : -1),
-						archer.getY() + Archer.correctionY);
+				archer.anim.draw(archer.getX() + Archer.correctionX
+						* ((archer.anim.facingRight) ? 1 : -1), archer.getY()
+						+ Archer.correctionY);
 				if (isOutOfBound(archer.getX(), archer.getY())
 						&& archer.isAlive) {
 					enemiesLeftToKill--;
@@ -114,29 +130,37 @@ public class GameManager {
 				}
 			}
 
-			// Dragons
-			for (Dragon dragon : dragons) {
-				dragon.anim.draw(dragon.getX() + Dragon.correctionX,
-						dragon.getY() + Dragon.correctionY);
-			}
+			// Dragon
+			dragon.animate();
 
 			world.step();
 		}
 	}
 
+	/**
+	 * Vérifie si la coordonnée est à l'exétirieur de l'écran (avec une marge
+	 * d'erreur)
+	 * 
+	 * @param x
+	 * @param y
+	 * @return vrai si hors de l'écran, faux sinon
+	 */
 	private boolean isOutOfBound(float x, float y) {
 		return (x > parent.width + player.anim.centerX * 2
 				|| x < -player.anim.centerX * 2
 				|| y > parent.height + player.anim.centerX * 2 || y < -player.anim.centerX * 2);
 	}
 
+	/**
+	 * Ajoute un archer dans le monde
+	 */
 	void addArcher() {
 		try {
 			Archer archer = new Archer(parent);
 
 			archer.setPosition(
 					(int) ((Math.random() * (parent.width - 0)) + 0),
-					(int) parent.height - 200.0f - Archer.size);
+					(int) parent.height - floorHeight - Archer.size);
 			world.add(archer);
 			archers.add(archer);
 			enemiesLeftToAdd--;
@@ -146,26 +170,12 @@ public class GameManager {
 		}
 	}
 
-	void addDragon() {
-		try {
-			Dragon dragon = new Dragon(parent);
-
-			dragon.setPosition(
-					(int) ((Math.random() * (parent.width - 0)) + 0),
-					(int) parent.height - 200.0f - Archer.size);
-			dragon.setSize(0);
-			world.add(dragon);
-			dragons.add(dragon);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
+	/**
+	 * vide la liste de mobs et vide le monde
+	 */
 	public void reset() {
 		try {
 			this.archers.clear();
-			this.dragons.clear();
 			this.world.clear();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -173,9 +183,13 @@ public class GameManager {
 		}
 	}
 
-	public void die() {
+	/**
+	 * On supprime les listes (garbage collector si on veut)
+	 */
+	public void GC() {
 		this.archers = null;
-		this.dragons = null;
+		this.dragon = null;
+		this.player = null;
 		this.world = null;
 	}
 }

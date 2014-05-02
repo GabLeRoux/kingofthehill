@@ -78,7 +78,7 @@ public class PicturesAnimator {
 			parent.image(pictures.get(index), x - centerX, y - centerY);
 		}
 
-		if (frame <= frameSkip) {
+		if (canDraw()) {
 			frame++;
 		} else {
 			frame = 1;
@@ -99,5 +99,9 @@ public class PicturesAnimator {
 				}
 			}
 		}
+	}
+	
+	public boolean canDraw() {
+		return frame <= frameSkip;
 	}
 }

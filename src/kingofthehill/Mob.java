@@ -11,6 +11,10 @@ public class Mob extends FCircle {
 	public static float impulse = 5000.0f;
 	public static float size = 130.0f;
 
+	/**
+	 * Constructeur de mob (mechant)
+	 * @param parent lien vers processing
+	 */
 	public Mob(PApplet parent) {
 		super(size);
 		this.parent = parent;
@@ -20,9 +24,9 @@ public class Mob extends FCircle {
 	}
 
 	public boolean leftOf(fisica.FBody body) {
-		return (this.getX() < body.getX());		
+		return (this.getX() < body.getX());
 	}
-	
+
 	public boolean rightOf(fisica.FBody body) {
 		return (this.getX() > body.getX());
 	}
